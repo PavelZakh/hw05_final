@@ -22,10 +22,6 @@ class PostModelTest(TestCase):
             text='Тестовая группа',
         )
 
-    @classmethod
-    def tearDownClass(cls):
-        Post.objects.all().delete()
-
     def test_models_have_correct_object_names(self):
         """Check that the __str__ works correctly for the models ."""
         group = PostModelTest.group
