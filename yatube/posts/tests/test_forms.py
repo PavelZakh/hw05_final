@@ -22,7 +22,7 @@ class PostFormCreateTests(TestCase):
         cls.new_post_text = 'New post'
         cls.edited_post_text = 'Edited post'
         cls.image_name = 'small'
-        cls.regexp = f'.*{cls.image_name}.*\.png'
+        cls.regexp = rf'.*{cls.image_name}.*\.png'
 
         small_png = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'

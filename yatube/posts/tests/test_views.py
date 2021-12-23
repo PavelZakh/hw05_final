@@ -24,7 +24,7 @@ class PostsPagesTest(TestCase):
         cls.slug = 'test_slug'
         cls.wrong_slug = 'wrong_slug'
         cls.username = 'HasNoName'
-        cls.flwr_usrnm= 'Follower'
+        cls.flwr_usrnm = 'Follower'
         cls.post_id = '1'
         cls.posts_count = 12
 
@@ -224,14 +224,20 @@ class PostsPagesTest(TestCase):
 
     def test_urls_follow_and_unfollow(self):
         response_follow = self.auth_follower_client.get(
-            reverse('posts:profile_follow', kwargs={'username': self.username}))
+            reverse(
+                'posts:profile_follow',
+                kwargs={'username': self.username})
+        )
         self.assertRedirects(
             response_follow,
             reverse('posts:profile', kwargs={'username': self.username})
         )
         self.assertEqual(Follow.objects.count(), 1)
         response_unfollow = self.auth_follower_client.get(
-            reverse('posts:profile_unfollow', kwargs={'username': self.username}))
+            reverse(
+                'posts:profile_unfollow',
+                kwargs={'username': self.username})
+        )
         self.assertRedirects(
             response_unfollow,
             reverse('posts:profile', kwargs={'username': self.username})
@@ -239,7 +245,7 @@ class PostsPagesTest(TestCase):
         self.assertEqual(Follow.objects.count(), 0)
 
     def test_follow_posts_correct_displayed(self):
-        follow = Follow.objects.create(
+        Follow.objects.create(
             user=self.user_follower,
             author=self.user
         )
@@ -250,7 +256,3 @@ class PostsPagesTest(TestCase):
         response = self.authorized_client.get(
             reverse('posts:follow_index'))
         self.assertFalse(response.context['page_obj'])
-
-
-
-
