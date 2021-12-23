@@ -15,7 +15,7 @@ class Group(models.Model):
         return self.title
 
 
-class Post(models.Model):
+class Post(CreatedModel):
     text = models.TextField(
         verbose_name='Текст поста',
         help_text='Текст нового поста',
@@ -24,10 +24,6 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='posts'
-    )
-    pub_date = models.DateTimeField(
-        'Дата создания',
-        auto_now_add=True
     )
     group = models.ForeignKey(
         Group,

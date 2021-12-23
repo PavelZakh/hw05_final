@@ -61,7 +61,7 @@ class PostsPagesTest(TestCase):
         ) for i in range(cls.posts_count))
         cls.posts_bulk = Post.objects.bulk_create(
             objects,
-            cls.posts_count
+            12
         )
 
     @classmethod
