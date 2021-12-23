@@ -28,6 +28,10 @@ class PagesTests(TestCase):
             group=cls.group
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        Post.objects.all().delete()
+
     def test_cash_index_page(self):
         response_index = self.client.get(reverse('posts:index'))
         Post.objects.filter(pk=self.post.id).delete()

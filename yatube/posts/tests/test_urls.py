@@ -44,6 +44,10 @@ class PostsUrlTest(TestCase):
             group=cls.group
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        Post.objects.all().delete()
+
     def setUp(self):
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)

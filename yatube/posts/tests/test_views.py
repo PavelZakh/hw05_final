@@ -3,7 +3,7 @@ import shutil
 
 from django.conf import settings
 from django.test import TestCase, Client
-# from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django import forms
@@ -40,32 +40,33 @@ class PostsPagesTest(TestCase):
             slug=cls.wrong_slug,
             description='Wrong description',
         )
-        # small_png = (
-        #    b'\x47\x49\x46\x38\x39\x61\x02\x00'
-        #    b'\x01\x00\x80\x00\x00\x00\x00\x00'
-        #    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-        #    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-        #    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-        #    b'\x0A\x00\x3B'
-        # )
-        # uploaded = SimpleUploadedFile(
-        #    name='small.png',
-        #    content=small_png,
-        #    content_type='image/gif')
-        # objects = (Post(
-        #    pk=i,
-        #    author=cls.user,
-        #    text='Test post %s' % i,
-        #    group=cls.group,
-        #    image=uploaded
-        # ) for i in range(cls.posts_count))
-        # cls.posts_bulk = Post.objects.bulk_create(
-        #    objects,
-        #    cls.posts_count
-        # )
+        small_png = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B'
+        )
+        uploaded = SimpleUploadedFile(
+            name='small.png',
+            content=small_png,
+            content_type='image/gif')
+        objects = (Post(
+            pk=i,
+            author=cls.user,
+            text='Test post %s' % i,
+            group=cls.group,
+            image=uploaded
+        ) for i in range(cls.posts_count))
+        cls.posts_bulk = Post.objects.bulk_create(
+            objects,
+            cls.posts_count
+        )
 
     @classmethod
     def tearDownClass(cls):
+        Post.objects.all().delete()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
@@ -98,8 +99,6 @@ class PostsPagesTest(TestCase):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
 
-    '''
-    # опять посты генерятся рандомно
     def test_urls_correct_context(self):
         """index, group_page and profile page get correct context."""
         pages_names = [
@@ -127,7 +126,7 @@ class PostsPagesTest(TestCase):
                 )
                 self.assertEqual(post.author, self.user)
                 self.assertEqual(post.group, self.group)
-    '''
+
     def test_urls_first_page_contains_required_posts_quantity(self):
         """index, group_page, profile. First page required posts displayed"""
         pages_names = [
@@ -177,10 +176,10 @@ class PostsPagesTest(TestCase):
             post.text,
             Post.objects.get(pk=self.post_id).text
         )
-        # self.assertEqual(
-        #    post.image,
-        #    self.posts_bulk[int(self.post_id)].image
-        # )
+        self.assertEqual(
+            post.image,
+            self.posts_bulk[int(self.post_id)].image
+        )
         self.assertEqual(post.author, self.user)
         self.assertEqual(post.group, self.group)
 

@@ -62,6 +62,7 @@ class PostFormCreateTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        Post.objects.all().delete()
 
     def setUp(self):
         self.authorized_client = Client()
