@@ -40,29 +40,29 @@ class PostsPagesTest(TestCase):
             slug=cls.wrong_slug,
             description='Wrong description',
         )
-        small_png = (
-            b'\x47\x49\x46\x38\x39\x61\x02\x00'
-            b'\x01\x00\x80\x00\x00\x00\x00\x00'
-            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
-            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
-            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
-            b'\x0A\x00\x3B'
-        )
-        uploaded = SimpleUploadedFile(
-            name='small.png',
-            content=small_png,
-            content_type='image/gif')
-        #objects = (Post(
+        # small_png = (
+        #    b'\x47\x49\x46\x38\x39\x61\x02\x00'
+        #    b'\x01\x00\x80\x00\x00\x00\x00\x00'
+        #    b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+        #    b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+        #    b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+        #    b'\x0A\x00\x3B'
+        # )
+        # uploaded = SimpleUploadedFile(
+        #    name='small.png',
+        #    content=small_png,
+        #    content_type='image/gif')
+        # objects = (Post(
         #    pk=i,
         #    author=cls.user,
         #    text='Test post %s' % i,
         #    group=cls.group,
         #    image=uploaded
-        #) for i in range(cls.posts_count))
-        #cls.posts_bulk = Post.objects.bulk_create(
+        # ) for i in range(cls.posts_count))
+        # cls.posts_bulk = Post.objects.bulk_create(
         #    objects,
         #    cls.posts_count
-        #)
+        # )
 
     @classmethod
     def tearDownClass(cls):
@@ -177,10 +177,10 @@ class PostsPagesTest(TestCase):
             post.text,
             Post.objects.get(pk=self.post_id).text
         )
-        #self.assertEqual(
+        # self.assertEqual(
         #    post.image,
         #    self.posts_bulk[int(self.post_id)].image
-        #)
+        # )
         self.assertEqual(post.author, self.user)
         self.assertEqual(post.group, self.group)
 
