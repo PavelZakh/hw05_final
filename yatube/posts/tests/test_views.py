@@ -57,7 +57,7 @@ class PostsPagesTest(TestCase):
             text='Test post %s' % i,
             group=cls.group,
             image=uploaded
-        ) for i in range(cls.posts_count))
+        ) for i in range(12))
         cls.posts_bulk = Post.objects.bulk_create(
             objects,
             12
