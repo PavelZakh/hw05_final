@@ -26,7 +26,6 @@ class PostsPagesTest(TestCase):
         cls.username = 'HasNoName'
         cls.flwr_usrnm = 'Follower'
         cls.post_id = '1'
-        cls.posts_count = 12
 
         cls.user_follower = User.objects.create_user(username=cls.flwr_usrnm)
         cls.user = User.objects.create_user(username=cls.username)
