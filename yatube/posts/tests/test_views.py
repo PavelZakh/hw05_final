@@ -222,7 +222,7 @@ class PostsPagesTest(TestCase):
 
         self.assertNotIn(post, self.group_wrong.posts.all())
 
-    def test_urls_follow_and_unfollow(self):
+    def test_follow_author(self):
         response_follow = self.auth_follower_client.get(
             reverse(
                 'posts:profile_follow',
@@ -232,7 +232,12 @@ class PostsPagesTest(TestCase):
             response_follow,
             reverse('posts:profile', kwargs={'username': self.username})
         )
-        self.assertEqual(Follow.objects.count(), 1)
+        self.assertTrue(Follow.objects.filter(
+            user=self.user_follower,
+            author=self.user,
+        ).exists())
+
+    def test_unfollow_author(self):
         response_unfollow = self.auth_follower_client.get(
             reverse(
                 'posts:profile_unfollow',
@@ -242,12 +247,15 @@ class PostsPagesTest(TestCase):
             response_unfollow,
             reverse('posts:profile', kwargs={'username': self.username})
         )
-        self.assertEqual(Follow.objects.count(), 0)
+        self.assertFalse(Follow.objects.filter(
+            user=self.user_follower,
+            author=self.user,
+        ).exists())
 
     def test_follow_posts_correct_displayed(self):
         Follow.objects.create(
             user=self.user_follower,
-            author=self.user
+            author=self.user,
         )
         response_follower = self.auth_follower_client.get(
             reverse('posts:follow_index'))

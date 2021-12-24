@@ -9,7 +9,7 @@ from ..models import Post, Group
 User = get_user_model()
 
 
-class PagesTests(TestCase):
+class PagesCacheTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

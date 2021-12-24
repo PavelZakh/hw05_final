@@ -8,13 +8,14 @@ from .utils import get_page_obj
 
 def index(request):
     template = 'posts/index.html'
-    post_list = Post.objects.all()
-    page_number = request.GET.get('page')
-    page_obj = get_page_obj(post_list, page_number)
+    post_list = Post.objects.select_related('group').all()
+    page_obj = get_page_obj(post_list, request)
     text = 'Последние обновления на сайте'
+    index_page = True
     context = {
         'text': text,
         'page_obj': page_obj,
+        'index_page': index_page,
     }
     return render(request, template, context)
 
@@ -23,8 +24,7 @@ def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     template = 'posts/group_list.html'
     posts = group.posts.all()
-    page_number = request.GET.get('page')
-    page_obj = get_page_obj(posts, page_number)
+    page_obj = get_page_obj(posts, request)
     context = {
         'group': group,
         'page_obj': page_obj,
@@ -37,19 +37,16 @@ def profile(request, username):
     user = get_object_or_404(User, username=username)
     user_posts = user.posts.all()
     user_posts_count = user_posts.count()
-    page_number = request.GET.get('page')
-    page_obj = get_page_obj(user_posts, page_number)
+    page_obj = get_page_obj(user_posts, request)
     context = {
         'author': user,
         'user_posts_count': user_posts_count,
         'page_obj': page_obj,
     }
     if request.user.is_authenticated:
-        follow = Follow.objects.filter(user=request.user, author=user)
-        if follow:
-            following = True
-        else:
-            following = False
+        following = Follow.objects.filter(
+            user=request.user,
+            author=user).exists()
         context['following'] = following
     return render(request, 'posts/profile.html', context)
 
@@ -122,35 +119,28 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    posts = []
     follows = Follow.objects.filter(user=request.user)
-    for follow in follows:
-        following_posts = Post.objects.filter(author=follow.author)
-        for post in following_posts:
-            posts.append(post)
-
-    page_number = request.GET.get('page')
-    page_obj = get_page_obj(posts, page_number)
+    following_users = User.objects.filter(following__in=follows)
+    posts = Post.objects.filter(author__in=following_users)
+    follow_page = True
+    page_obj = get_page_obj(posts, request)
     text = 'Посты авторов, на которых вы подписаны'
     context = {
         'text': text,
         'page_obj': page_obj,
+        'follow_page': follow_page
     }
     return render(request, 'posts/follow.html', context)
 
 
 @login_required
 def profile_follow(request, username):
-    following = User.objects.filter(username=username)[0]
-    if request.user != following:
-        if not Follow.objects.filter(
+    follower = get_object_or_404(User, username=username)
+    if request.user != follower:
+        Follow.objects.get_or_create(
             user=request.user,
-            author=User.objects.filter(username=username)[0]
-        ):
-            Follow.objects.create(
-                user=request.user,
-                author=User.objects.filter(username=username)[0]
-            )
+            author=follower,
+        )
     return redirect('posts:profile', username=username)
 
 
@@ -158,6 +148,6 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     Follow.objects.filter(
         user=request.user,
-        author=User.objects.filter(username=username)[0]
+        author=get_object_or_404(User, username=username)
     ).delete()
     return redirect('posts:profile', username=username)
